@@ -1,7 +1,11 @@
 Relatório do Projeto: Conversor de Imagem para Arte ASCII com Ordenação
+
 Disciplina: Estrutura de Dados – 2025.1
+
 Professora: Viviane Aureliano
+
 Alunos: Glauber Ruan Felix da Silva e Thiago Henrique dos Santos Gomes
+
 
 1. Descrição do Problema Resolvido:
 
