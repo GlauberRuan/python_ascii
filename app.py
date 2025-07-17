@@ -11,19 +11,20 @@ from conversor_ascii import gerar_arte_ascii, ordenar_arte_ascii
 # Inicializa o app Flask
 app = Flask(__name__)
 
-# Configuração da pasta de uploads\UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+# Configuração da pasta de uploads
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Tipos de arquivos permitidos para upload
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp'}
 
-# Banco de dados em memória para armazenar tarefas e fila de prioridade
+# Banco de dados em memória para armazenar tarefas e fila de prioridade - Dicionário
 tasks_db = {}
 task_heap = []
 heap_id_counter = 0  # usado para desempatar tarefas com mesmo tamanho
 
-#  Estrutura de lista encadeada para manter histórico limitado
+# Estrutura de lista encadeada para manter histórico limitado
 class HistoricoNode:
     __slots__ = ('task_id', 'timestamp', 'next')
 
@@ -37,21 +38,21 @@ historico_head = None
 historico_tail = None
 HISTORICO_MAX = 10  # Limite de histórico
 
-# Rota para servir arquivos HTML manualmente, se necessário
+# Rota para servir arquivos estáticos manualmente, se necessário
 @app.route('/templates/<path:filename>')
 def custom_static(filename):
     return send_from_directory('templates', filename)
 
-#Verifica se o arquivo tem uma extensão permitida
+# Verifica se o arquivo tem uma extensão permitida
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-#Thread que processa as imagens em segundo plano
+# Thread que processa as imagens em segundo plano - Heap Mínimo
 def worker():
     global task_heap
     while True:
         if task_heap:
-            # Retira a tarefa de maior prioridade (menor tamanho)
+            # Retira a tarefa de maior prioridade (menor tamanho) - Heap Mínimo
             _, heap_id, task_id = heapq.heappop(task_heap)
             task = tasks_db.get(task_id)
             if not task:
@@ -69,7 +70,7 @@ def worker():
                 # Apaga a imagem após o processamento
                 if os.path.exists(task['caminho_imagem']):
                     os.remove(task['caminho_imagem'])
-            #Adiciona ao histórico encadeado
+            # Adiciona ao histórico encadeado
             adicionar_ao_historico(task_id)
         else:
             time.sleep(0.5)  # espera um pouco caso não haja tarefas
@@ -174,7 +175,7 @@ def get_historico():
         current = current.next
     return jsonify(historico)
 
-#Ordena a arte ASCII pelo número de caracteres em cada linha
+# Ordena a arte ASCII pelo número de caracteres em cada linha
 @app.route('/ordenar/<task_id>', methods=['POST'])
 def ordenar_arte(task_id):
     task = tasks_db.get(task_id)

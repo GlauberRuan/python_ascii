@@ -1,188 +1,51 @@
-## 1. Descrição do Problema Resolvido
+Relatório do Projeto: Conversor de Imagem para Arte ASCII com Ordenação
+Disciplina: Estrutura de Dados – 2025.1
+Professora: Viviane Aureliano
+Alunos: Glauber Ruan Felix da Silva e Thiago Henrique dos Santos Gomes
 
-O projeto resolve o problema de conversão de imagens digitais em arte ASCII, uma representação visual que usa caracteres de texto para recriar imagens. Isso permite:
-```
-   * Visualizar imagens em ambientes restritos a texto
-   * Compartilhar representações artísticas de imagens via texto
-   * Processar múltiplas imagens simultaneamente com priorização
-   * Manter histórico de conversões
-   * Aplicar transformações na arte gerada (como ordenação)
-```
+1. Descrição do Problema Resolvido
+O projeto tem como objetivo criar uma aplicação capaz de converter imagens comuns (JPG, PNG, etc.) em arte ASCII, ou seja, uma representação visual da imagem utilizando apenas caracteres de texto. Além disso, permite ordenar essa arte com base na densidade de caracteres em cada linha. O sistema gerencia múltiplas tarefas simultâneas e oferece uma interface web para upload e visualização dos resultados.
 
-## 2. Justificativa da Escolha do Tema
+2. Justificativa da Escolha do Tema
+Escolhemos este tema por ser criativo, desafiador e por permitir aplicar diversas estruturas de dados estudadas na disciplina. Trabalhar com manipulação de imagens, conversão para texto e ordenação visual permitiu explorar o potencial prático de algoritmos e estruturas de dados em um projeto tangível e interessante.
 
-A escolha se baseou em:
-```
-    * Relevância técnica: Combina processamento de imagens com estruturas de dados
-    * Aplicabilidade prática: Útil para desenvolvedores, artistas digitais e entusiastas
-    * Adequação aos requisitos: Permite implementar múltiplas estruturas de dados
-    * Potencial educativo: Demonstra aplicação prática de algoritmos estudados
-    * Desafio técnico: Equilíbrio entre qualidade visual e desempenho
-```
+3. Estruturas de Dados Utilizadas e Justificativas
+a) Heap Mínimo:
 
-## 3. Estruturas de Dados Aplicadas
+Utilizada para gerenciar as tarefas de processamento. Cada tarefa é inserida na fila com prioridade baseada no tamanho da imagem (quanto menor, maior a prioridade). Essa estrutura permite que tarefas menores sejam processadas mais rapidamente, otimizando o tempo total de resposta.
 
-a) Fila de Prioridade (Heap)
+b) Lista Encadeada (Histórico):
 
-Aplicação:
-```
-* Gerenciamento de tarefas de conversão
-* Priorização por tamanho de arquivo (imagens menores primeiro)
-```
+Empregada para armazenar o histórico das últimas 10 tarefas processadas. Foi escolhida por permitir inserção eficiente no final e remoção fácil do início quando o limite é atingido.
 
-Implementação:
-````
-Uso do módulo heapq do Python
-Tuplas (tamanho_arquivo, id_heap, task_id) como elementos
-````
-Justificativa:
-```
-* Eficiência O(log n) nas operações de inserção/remoção
-* Garante que tarefas mais rápidas sejam processadas primeiro
-* Melhora tempo de resposta percebido pelo usuário
-```
+c) Dicionário (Banco de Dados Temporário):
 
-* b) Lista Encadeada
+Usado para armazenar informações das tarefas, como status, caminho da imagem, resultado em ASCII, etc. Foi escolhido pela eficiência no acesso direto via identificador único (UUID).
 
-    Aplicação:
+4. Desafios Enfrentados e Soluções Encontradas
+Desafio 1: Gerenciar várias tarefas simultaneamente.  
+Solução: Utilização de uma thread em segundo plano para processar tarefas sem travar a aplicação web.
 
-        Armazenamento do histórico de tarefas concluídas
+Desafio 2: Controlar o tamanho do histórico. 
+Solução: Implementação de uma lista encadeada com limite de 10 elementos.
 
-        Limitação ao último N itens (10 por padrão)
+Desafio 3: Ordenar as linhas da arte ASCII por densidade. 
+Solução: Uso do algoritmo HeapSort adaptado para comparar a quantidade de caracteres "não vazios" em cada linha da arte.
 
-    Implementação:
+Desafio 4: Limpar arquivos temporários após o uso. 
+Solução: Deleção dos arquivos após conclusão da tarefa.
 
-        Classe HistoricoNode com ponteiro next
-
-        Ponteiros head e tail para gerenciamento
-
-    Justificativa:
-
-        Inserção/remoção O(1) no início/fim
-
-        Uso eficiente de memória para dados voláteis
-
-        Ideal para histórico de tamanho limitado
-
-c) Algoritmo Heapsort
-
-Aplicação:
-
-```
-Ordenação da arte ASCII por densidade de caracteres
-Transformação visual opcional para o usuário
-```
-
-Implementação:
-```
-Funções ordenar_arte_ascii() e heapify()
-Ordenação baseada em densidade (caracteres não-espaço)
-Funções ordenar_arte_ascii() e heapify()
-Ordenação baseada em densidade (caracteres não-espaço)
-```
-
-Justificativa:
-```
-Complexidade O(n log n) garantida
-Relação natural com a estrutura heap já utilizada
-Demonstração prática do algoritmo estudado
-```
-
-## 4. Desafios Enfrentados e Soluções
-
-* Desafio 1: Processamento Assíncrono 
-    Problema: Bloqueio da interface durante conversão
-    Solução: Sistema de filas com thread worker separada
-<br/><br/>
-* Desafio 2: Gerenciamento de Prioridades
-    Problema: Tarefas grandes bloqueando pequenas
-    Solução: Heap prioritário baseado em tamanho de arquivo
-<br/><br/>
-* Desafio 3: Manutenção de Histórico
-    Problema: Armazenamento eficiente com limite máximo
-    Solução: Lista encadeada com corte automático
-<br/><br/>
-* Desafio 4: Qualidade Visual ASCII
-    Problema: Representação inadequada de imagens
-    Solução: Ajuste na escala de cinza e caracteres selecionados
-<br/><br/>
-Desafio 5: Ordenação de Arte Multilinha
-    Problema: Manter estrutura visual após ordenação
-    Solução: Divisão por linhas e ordenação baseada em densidade
-<br/><br/>
 5. Instruções para Executar o Projeto
-
-Pré-requisitos:
-
-    Python 3.6+
-
-    Bibliotecas: Flask, Pillow
-
-Passo a passo:
-
-    Configurar ambiente:
-
-bash
-
-# Criar ambiente virtual (opcional)
-python -m venv venv
-
-# Ativar ambiente
-# Linux/Mac:
-source venv/bin/activate
-# Windows:
-venv\Scripts\activate
-
-# Instalar dependências
-pip install Flask Pillow
-
-    Estrutura de arquivos:
-
-text
-
-projeto/
-├── app.py
-├── conversor_ascii.py
-└── templates/
-    └── index.html
-
-    Executar aplicação:
-
-bash
-
+1.	Certifique-se de ter o Python instalado.
+2.	No terminal, crie e ative um ambiente virtual (opcional):
+3.	python -m venv venv
+4.	venv\Scripts\activate  # Windows
+source venv/bin/activate  # Linux/macOS
+5.	Instale as dependências:
+pip install flask pillow
+6.	Execute o arquivo principal:
 python app.py
+7.	Acesse no navegador:
+http://localhost:5000
+8.	Envie imagens, aguarde o processamento e visualize a arte ASCII.
 
-    Acessar interface:
-    Abra o navegador em: http://localhost:5000
-
-Operação:
-
-    Na página inicial, clique na área tracejada ou arraste imagens
-
-    Selecione uma ou mais imagens (formatos: JPG, PNG, GIF, BMP)
-
-    Clique em "Converter Imagens"
-
-    Acompanhe o status do processamento
-
-    Para arte concluída:
-
-        Visualize o resultado
-
-        Clique em "Ordenar Arte" para aplicar transformação
-
-    Clique em "Carregar Histórico" para ver tarefas recentes
-
-Recursos Adicionais:
-
-    API de status: /status/<task_id>
-
-    API de histórico: /historico
-
-    API de ordenação: POST /ordenar/<task_id>
-
-Arquivos de Exemplo:
-Imagens de teste podem ser colocadas na pasta uploads/ (criada automaticamente)
-
-Encerramento:
-Pressione Ctrl+C no terminal para parar o servidor
